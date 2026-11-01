@@ -1,0 +1,379 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    font-family: Arial, sans-serif;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            #176b43 0%,
+            #0b482e 65%,
+            #073421 100%
+        );
+
+    color: white;
+}
+
+
+
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 20px 30px;
+
+    background-color: rgba(0, 0, 0, 0.25);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.top-bar h1 {
+    margin: 0;
+
+    font-size: 28px;
+    letter-spacing: 4px;
+}
+
+.back-button {
+    color: white;
+    text-decoration: none;
+
+    font-size: 14px;
+
+    padding: 10px 15px;
+
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+
+    transition: background-color 0.2s;
+}
+
+.back-button:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.header-placeholder {
+    width: 110px;
+}
+
+
+
+
+.game-container {
+    max-width: 1100px;
+
+    margin: 0 auto;
+    padding: 35px 20px;
+}
+
+
+
+.player-area {
+    margin-bottom: 30px;
+}
+
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    margin-bottom: 15px;
+}
+
+.player-info h2 {
+    margin: 0;
+
+    font-size: 22px;
+}
+
+.score {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 35px;
+    height: 35px;
+
+    padding: 0 10px;
+
+    background-color: rgba(0, 0, 0, 0.3);
+
+    border-radius: 50px;
+
+    font-size: 16px;
+    font-weight: bold;
+}
+
+
+
+
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    gap: 12px;
+
+    min-height: 150px;
+}
+
+.card {
+    width: 100px;
+    height: auto;
+
+    border-radius: 6px;
+
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.35);
+
+    animation: card-appear 0.25s ease-out;
+}
+
+
+/* Hidden dealer card */
+
+.card-back {
+    height: 145px;
+
+    background:
+        repeating-linear-gradient(
+            45deg,
+            #777777,
+            #777777 5px,
+            #888888 5px,
+            #888888 10px
+        );
+
+    border: 3px solid #cccccc;
+
+    border-radius: 6px;
+
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.35);
+}
+
+
+.card.hidden {
+    filter: brightness(0.8);
+}
+
+
+
+@keyframes card-appear {
+    from {
+        opacity: 0;
+        transform: translateY(-15px) rotate(-3deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) rotate(0);
+    }
+}
+
+
+
+.game-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 55px;
+
+    margin: 25px 0;
+
+    padding: 15px;
+
+    background-color: rgba(0, 0, 0, 0.25);
+
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    text-align: center;
+}
+
+
+
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    gap: 15px;
+
+    margin-top: 35px;
+}
+
+.game-button {
+    min-width: 120px;
+
+    padding: 14px 25px;
+
+    border: none;
+    border-radius: 8px;
+
+    background-color: #f0c75e;
+    color: #202020;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s,
+        transform 0.2s;
+}
+
+.game-button:hover:not(:disabled) {
+    background-color: #ffdc7c;
+    transform: translateY(-2px);
+}
+
+.game-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.game-button.secondary {
+    background-color: #e6e6e6;
+}
+
+.game-button.secondary:hover:not(:disabled) {
+    background-color: white;
+}
+
+.game-button.new-game {
+    background-color: #65c991;
+}
+
+.game-button.new-game:hover {
+    background-color: #85e0ad;
+}
+
+
+
+
+.rules {
+    margin-top: 30px;
+
+    color: rgba(255, 255, 255, 0.65);
+
+    font-size: 13px;
+
+    text-align: center;
+}
+
+
+
+
+@media (max-width: 600px) {
+
+    .top-bar {
+        padding: 15px;
+    }
+
+    .top-bar h1 {
+        font-size: 20px;
+        letter-spacing: 2px;
+    }
+
+    .back-button {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .header-placeholder {
+        width: 0;
+    }
+
+    .game-container {
+        padding: 25px 15px;
+    }
+
+    .card {
+        width: 75px;
+    }
+
+    .cards {
+        gap: 8px;
+    }
+
+    .game-button {
+        min-width: 100px;
+        padding: 12px 18px;
+    }
+}
+.bankroll-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 16px 20px;
+    box-sizing: border-box;
+
+    background: #202820;
+    border: 1px solid #526052;
+    border-radius: 12px;
+    color: white;
+}
+
+.bankroll-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.bankroll-item span,
+.bankroll-item label {
+    font-size: 14px;
+    color: #c5d0c5;
+}
+
+.bankroll-item strong {
+    font-size: 22px;
+    color: #f3d37a;
+}
+
+#bet-amount {
+    width: 90px;
+    padding: 8px;
+    border: 1px solid #8a9a8a;
+    border-radius: 6px;
+    background: #111811;
+    color: white;
+    font-size: 16px;
+}
+
+.bankroll-item small {
+    font-size: 11px;
+    color: #aab5aa;
+}
+
+@media (max-width: 550px) {
+    .bankroll-panel {
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .bankroll-item strong {
+        font-size: 17px;
+    }
+
+    .bankroll-item span,
+    .bankroll-item label {
+        font-size: 12px;
+    }
+}

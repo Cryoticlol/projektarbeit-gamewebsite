@@ -1,0 +1,13 @@
+body { text-align: center; }
+#grid { border-collapse: collapse; margin: 0 auto; }
+#grid td {
+    width: 25px;
+    height: 25px;
+    border: 1px solid black;
+    text-align: center;
+    background: #bbb;
+    cursor: pointer;
+}
+#grid td.clicked { background: white; }
+#grid td.mine { background: red; }
+#grid td.flag { background: #bbb; color: red; font-weight: bold; }

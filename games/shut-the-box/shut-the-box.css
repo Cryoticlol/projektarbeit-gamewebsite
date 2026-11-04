@@ -182,24 +182,55 @@ h1 { margin: 0; font: 400 23px Georgia, "Times New Roman", serif; }
 }
 .front-diamond { font-size: 6px; opacity: .6; }
 
-/* 3. Zwei Holzwürfel: Die Augen liegen auf einem 3×3-Raster. */
-.dice { position: relative; display: flex; align-items: center; justify-content: center; gap: 32px; padding: 6px 0; }
+/* Flache Holzwürfel im ursprünglichen Design. */
+.dice {
+    --die-size: 75px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    padding: 6px 0;
+}
+.die-slot { width: var(--die-size); height: var(--die-size); }
+.die-slot:nth-child(2) { transform: translateY(12px); }
 .die {
-    display: grid;
-    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-    width: 75px;
-    height: 75px;
+    --rest-angle: -14deg;
+    width: 100%;
+    height: 100%;
     padding: 14px;
     border: 1px solid #b88f59;
     border-radius: 14px;
     background: var(--wood-grain), linear-gradient(125deg, #f4dfb4, #e2c18c 65%, #cda66f);
     box-shadow: 2px 4px 0 #b08750, 4px 7px 0 #906a3a, 7px 15px 11px #09271d80, 1px 2px 2px #fff3cf inset;
+    transform: rotate(var(--rest-angle));
 }
-.die-three { transform: rotate(-14deg); }
-.die-five { transform: translateY(12px) rotate(14deg); }
+.die-slot:nth-child(2) .die { --rest-angle: 14deg; }
+/* Nur die ausgewählte Augenzahl ist sichtbar. */
+.die-face {
+    display: none;
+    width: 100%;
+    height: 100%;
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+}
+.die[data-value="1"] .die-face-one,
+.die[data-value="2"] .die-face-two,
+.die[data-value="3"] .die-face-three,
+.die[data-value="4"] .die-face-four,
+.die[data-value="5"] .die-face-five,
+.die[data-value="6"] .die-face-six { display: grid; }
+/* JavaScript kann is-rolling während eines Wurfs hinzufügen und danach entfernen. */
+.die.is-rolling { animation: dice-roll 700ms ease-in-out infinite; }
+@keyframes dice-roll {
+    0% { transform: rotate(var(--rest-angle)); }
+    45% { transform: translateY(-12px) rotate(calc(var(--rest-angle) + 170deg)); }
+    100% { transform: rotate(calc(var(--rest-angle) + 360deg)); }
+}
 .pip { display: block; place-self: center; width: 10px; height: 10px; border-radius: 50%; background: #352d23; box-shadow: 0 2px 2px #130e0a inset, 0 1px 0 #f5e3ba; }
 .top-left { grid-area: 1 / 1; }
 .top-right { grid-area: 1 / 3; }
+.middle-left { grid-area: 2 / 1; }
+.middle-right { grid-area: 2 / 3; }
 .center { grid-area: 2 / 2; }
 .bottom-left { grid-area: 3 / 1; }
 .bottom-right { grid-area: 3 / 3; }
@@ -250,7 +281,8 @@ h1 { margin: 0; font: 400 23px Georgia, "Times New Roman", serif; }
     .tile::after { bottom: 8px; }
     .hinge-rail { height: 12px; margin-right: -2px; margin-left: -2px; }
     .dice-tray { min-height: 190px; padding: 28px 0; }
-    .die { width: 64px; height: 64px; padding: 12px; border-radius: 12px; }
+    .dice { --die-size: 64px; }
+    .die { padding: 12px; border-radius: 12px; }
     .pip { width: 9px; height: 9px; }
     .box-front { height: 33px; margin-right: -10px; margin-left: -10px; font-size: 7px; letter-spacing: 2px; }
     .actions { gap: 8px; margin-top: 20px; }
@@ -258,5 +290,5 @@ h1 { margin: 0; font: 400 23px Georgia, "Times New Roman", serif; }
     .actions .restart-button { flex-basis: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { transition: none !important; }
+    *, *::before, *::after { transition: none !important; animation: none !important; }
 }

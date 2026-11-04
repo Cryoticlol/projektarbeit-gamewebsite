@@ -1,0 +1,262 @@
+/* Grundgestaltung der Spieleseite. */
+:root {
+    color-scheme: light;
+    --paper: #f7f5ef;
+    --ink: #252e29;
+    --green: #244f3b;
+    --wood-grain: repeating-linear-gradient(3deg, transparent 0 7px, #835b2810 8px, transparent 9px 14px, #fff7da33 15px, transparent 17px 23px);
+}
+
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+button, summary, a { -webkit-tap-highlight-color: transparent; }
+button { font: inherit; }
+button:focus-visible, summary:focus-visible, a:focus-visible { outline: 3px solid #b16b24; outline-offset: 5px; }
+.game-page { width: min(820px, calc(100% - 40px)); padding: 30px 0; }
+.toolbar {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+.page-title { display: flex; align-items: center; gap: 13px; }
+h1 { margin: 0; font: 400 23px Georgia, "Times New Roman", serif; }
+.back-link { display: grid; place-items: center; width: 32px; height: 40px; color: var(--ink); text-decoration: none; font-size: 23px; }
+
+/* Die Regelkarte liegt über dem Brett und öffnet sich nur bei Bedarf. */
+.help summary {
+    display: block;
+    list-style: none;
+    padding: 10px 14px;
+    border: 1px solid #cbd0c5;
+    border-radius: 5px;
+    color: var(--green);
+    font-size: 13px;
+    cursor: pointer;
+}
+.help summary::-webkit-details-marker { display: none; }
+.help summary:hover { background: #eaece2; }
+.help[open] summary { color: #fff; background: var(--green); border-color: var(--green); }
+.help-panel {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: min(430px, 100%);
+    max-height: min(65svh, 520px);
+    overflow-y: auto;
+    padding: 22px;
+    border: 1px solid #d9dace;
+    border-radius: 8px;
+    background: var(--paper);
+    box-shadow: 0 12px 36px #182d2333;
+}
+.help-panel h2 { margin: 0 0 15px; font: 400 22px Georgia, "Times New Roman", serif; }
+.help-panel ul { margin: 0; padding-left: 18px; }
+.help-panel li { padding-left: 3px; font-size: 13px; line-height: 1.65; }
+.help-panel li + li { margin-top: 10px; }
+
+/* Holzrahmen, Filz und Zahlenklappen. */
+.wooden-box {
+    position: relative;
+    padding: 22px 22px 0;
+    background: var(--wood-grain), linear-gradient(110deg, #ead1a0, #d5ad72 29%, #f0d7a7 68%, #c49a60);
+    border: 1px solid #c7a06c;
+    border-radius: 9px 9px 7px 7px;
+    box-shadow: 0 2px 0 #fff5dc inset, 2px 0 0 #f6dfba inset, 0 24px 28px -19px #44301670, 0 45px 52px -40px #4430165c;
+}
+.wooden-box::before, .wooden-box::after {
+    content: "";
+    position: absolute;
+    top: 8px;
+    width: 5px;
+    height: 5px;
+    background: linear-gradient(145deg, #a37c45, #e3c791);
+    border: 1px solid #b38b54;
+    border-radius: 50%;
+    box-shadow: 0 1px 0 #f8e5bd;
+}
+.wooden-box::before { left: 9px; }
+.wooden-box::after { right: 9px; }
+
+.felt {
+    position: relative;
+    padding: 15px 15px 0;
+    background: repeating-linear-gradient(0deg, #ffffff03 0 1px, transparent 1px 3px), repeating-linear-gradient(90deg, #00000007 0 1px, transparent 1px 3px), radial-gradient(ellipse at 50% 35%, #39764e, #255c3b 65%, #18482f);
+    border: 1px solid #7b5b32;
+    border-radius: 3px;
+    box-shadow: 0 4px 10px #0b231d6b inset, 3px 0 8px #112a1d33 inset;
+}
+.tiles {
+    display: grid;
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    gap: 4px;
+    position: relative;
+    z-index: 1;
+}
+.tile {
+    position: relative;
+    display: grid;
+    place-items: start center;
+    height: clamp(100px, 11.8vw, 158px);
+    padding: 18px 0 0;
+    color: #302c24;
+    background: var(--wood-grain), linear-gradient(100deg, #ead4ab, #f5e4c1 35%, #e3c799 82%, #d3b182);
+    border: 1px solid #bd9869;
+    border-bottom: 6px solid #ad8252;
+    border-radius: 5px 5px 9px 9px;
+    box-shadow: 0 2px 0 #fff4db inset, 2px 0 0 #f9e8c6 inset, 1px 5px 4px #092b2559;
+    transform: perspective(500px) rotateX(-7deg);
+    transform-origin: center bottom;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+    opacity: 1;
+}
+.tile span {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(33px, 4.3vw, 58px);
+    font-weight: 700;
+    line-height: 1;
+    text-shadow: 0 1px 0 #fff2d4;
+}
+.tile::after {
+    content: "";
+    position: absolute;
+    bottom: 11px;
+    width: 40%;
+    height: 1px;
+    background: #ac835b40;
+    box-shadow: 0 1px 0 #fff0cb66;
+}
+.tile:not(:disabled) { cursor: pointer; }
+.tile:not(:disabled):hover { transform: perspective(500px) rotateX(-7deg) translateY(-4px); }
+
+/* Zustände für die spätere Spiellogik. */
+.tile[aria-pressed="true"] { outline: 3px solid #f0c16d; outline-offset: -4px; transform: translateY(-5px); }
+.tile.is-closed { transform: perspective(500px) rotateX(65deg); filter: brightness(.78); }
+
+.hinge-rail {
+    position: relative;
+    z-index: 2;
+    height: 17px;
+    margin: -1px -6px 0;
+    border: 1px solid #b18a56;
+    border-radius: 4px;
+    background: var(--wood-grain), linear-gradient(#e9d0a1, #f3dfb5 35%, #d2ae78 80%, #a77b47);
+    box-shadow: 0 4px 5px #0b28184d;
+}
+.dice-tray {
+    position: relative;
+    min-height: 230px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 39px 0 31px;
+    overflow: hidden;
+}
+.box-front {
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 0 -22px;
+    border-top: 2px solid #f2d9ad;
+    border-radius: 0 0 6px 6px;
+    background: var(--wood-grain), linear-gradient(100deg, #d3af79, #e6c796 45%, #c7a06b);
+    box-shadow: 0 -2px 3px #96724433 inset, 0 1px 0 #aa804f;
+    color: #765635;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 2.8px;
+}
+.front-diamond { font-size: 6px; opacity: .6; }
+
+/* 3. Zwei Holzwürfel: Die Augen liegen auf einem 3×3-Raster. */
+.dice { position: relative; display: flex; align-items: center; justify-content: center; gap: 32px; padding: 6px 0; }
+.die {
+    display: grid;
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+    width: 75px;
+    height: 75px;
+    padding: 14px;
+    border: 1px solid #b88f59;
+    border-radius: 14px;
+    background: var(--wood-grain), linear-gradient(125deg, #f4dfb4, #e2c18c 65%, #cda66f);
+    box-shadow: 2px 4px 0 #b08750, 4px 7px 0 #906a3a, 7px 15px 11px #09271d80, 1px 2px 2px #fff3cf inset;
+}
+.die-three { transform: rotate(-14deg); }
+.die-five { transform: translateY(12px) rotate(14deg); }
+.pip { display: block; place-self: center; width: 10px; height: 10px; border-radius: 50%; background: #352d23; box-shadow: 0 2px 2px #130e0a inset, 0 1px 0 #f5e3ba; }
+.top-left { grid-area: 1 / 1; }
+.top-right { grid-area: 1 / 3; }
+.center { grid-area: 2 / 2; }
+.bottom-left { grid-area: 3 / 1; }
+.bottom-right { grid-area: 3 / 3; }
+
+/* Die Spielsteuerung wird später mit JavaScript verbunden. */
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 24px;
+}
+.actions button {
+    min-height: 44px;
+    padding: 10px 22px;
+    border: 1px solid #cbd0c5;
+    border-radius: 5px;
+    background: transparent;
+    color: #52604e;
+    font-size: 13px;
+}
+.actions .primary-button { background: var(--green); border-color: var(--green); color: #fff; }
+.actions .restart-button { border-color: transparent; }
+.actions button:not(:disabled) { cursor: pointer; }
+
+/* Auch auf kleinen Bildschirmen bleiben die neun Klappen in einer Reihe. */
+@media (max-width: 650px) {
+    .game-page { width: calc(100% - 32px); padding: 24px 0; }
+    h1 { font-size: 21px; }
+    .tile { height: clamp(82px, 18vw, 120px); padding-top: 13px; }
+    .tile span { font-size: clamp(28px, 7vw, 44px); }
+    .wooden-box { padding: 15px 15px 0; }
+    .felt { padding: 10px 8px 0; }
+    .box-front { margin-right: -15px; margin-left: -15px; }
+    .dice-tray { min-height: 210px; }
+}
+@media (max-width: 420px) {
+    .toolbar { gap: 10px; margin-bottom: 16px; }
+    .page-title { gap: 6px; }
+    h1 { font-size: 20px; }
+    .help summary { padding: 10px 11px; font-size: 12px; }
+    .help-panel { padding: 18px; }
+    .wooden-box { padding: 11px 10px 0; border-radius: 6px; }
+    .felt { padding: 9px 6px 0; }
+    .tiles { gap: 2px; }
+    .tile { height: 82px; border-bottom-width: 4px; border-radius: 3px 3px 5px 5px; padding-top: 12px; }
+    .tile span { font-size: clamp(24px, 6.5vw, 28px); }
+    .tile::after { bottom: 8px; }
+    .hinge-rail { height: 12px; margin-right: -2px; margin-left: -2px; }
+    .dice-tray { min-height: 190px; padding: 28px 0; }
+    .die { width: 64px; height: 64px; padding: 12px; border-radius: 12px; }
+    .pip { width: 9px; height: 9px; }
+    .box-front { height: 33px; margin-right: -10px; margin-left: -10px; font-size: 7px; letter-spacing: 2px; }
+    .actions { gap: 8px; margin-top: 20px; }
+    .actions button { padding: 10px 13px; font-size: 12px; }
+    .actions .restart-button { flex-basis: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; }
+}

@@ -25,20 +25,25 @@ const ranks = [
 
 let deck = [];
 
-let playerHand = [];
 let dealerHand = [];
+
+let playerHands = [];
+let handBets = [];
+let handFinished = [];
+
+let activeHand = 0;
 
 let bankroll = 100;
 let sessionHighScore =
     Number(localStorage.getItem("blackjackHighScore")) || 100;
-let currentBet = 0;
 
 let gameOver = true;
 let roundInProgress = false;
 let dealerHoleCardHidden = true;
 
+let hasSplit = false;
 
-// HTML elements
+
 const playerCardsElement =
     document.getElementById("player-cards");
 
@@ -66,6 +71,12 @@ const newGameButton =
 const betButton =
     document.getElementById("bet-button");
 
+const doubleButton =
+    document.getElementById("double-button");
+
+const splitButton =
+    document.getElementById("split-button");
+
 const bankrollElement =
     document.getElementById("bankroll");
 
@@ -75,6 +86,14 @@ const sessionHighScoreElement =
 const betAmountInput =
     document.getElementById("bet-amount");
 
+const rulesButton =
+    document.getElementById("rules-button");
+
+const rulesPanel =
+    document.getElementById("rules-panel");
+
+const closeRulesButton =
+    document.getElementById("close-rules-button");
 
 function createDeck() {
     deck = [];
@@ -125,13 +144,20 @@ function calculateScore(hand) {
         }
     }
 
-    // Convert Aces from 11 to 1 if necessary
     while (score > 21 && aces > 0) {
         score -= 10;
         aces--;
     }
 
     return score;
+}
+
+
+function isNaturalBlackjack(hand) {
+    return (
+        hand.length === 2 &&
+        calculateScore(hand) === 21
+    );
 }
 
 
@@ -147,7 +173,6 @@ function renderHand(hand, container, hideFirstCard = false) {
     container.innerHTML = "";
 
     hand.forEach((card, index) => {
-        // Show a gray card back for the hidden dealer card
         if (hideFirstCard && index === 0) {
             const cardBack = document.createElement("div");
 
@@ -155,7 +180,6 @@ function renderHand(hand, container, hideFirstCard = false) {
             cardBack.setAttribute("aria-label", "Hidden card");
 
             container.appendChild(cardBack);
-
             return;
         }
 
@@ -179,21 +203,59 @@ function updateBankrollDisplay() {
     betAmountInput.max = bankroll;
 }
 
+function renderPlayerHands() {
+    playerCardsElement.innerHTML = "";
+
+    playerHands.forEach((hand, index) => {
+        const handContainer = document.createElement("div");
+
+        handContainer.classList.add("split-hand");
+
+        if (index === activeHand && roundInProgress) {
+            handContainer.classList.add("active-hand");
+        }
+
+        const handTitle = document.createElement("h3");
+
+        handTitle.textContent =
+            playerHands.length > 1
+                ? `Hand ${index + 1} - €${handBets[index]}`
+                : `Your hand - €${handBets[index]}`;
+
+        const handScore = document.createElement("span");
+
+        handScore.textContent =
+            `Score: ${calculateScore(hand)}`;
+
+        const cardsContainer = document.createElement("div");
+
+        cardsContainer.classList.add("cards");
+
+        renderHand(hand, cardsContainer);
+
+        handContainer.appendChild(handTitle);
+        handContainer.appendChild(handScore);
+        handContainer.appendChild(cardsContainer);
+
+        playerCardsElement.appendChild(handContainer);
+    });
+
+    if (playerHands.length > 0) {
+        playerScoreElement.textContent =
+            calculateScore(playerHands[activeHand]);
+    } else {
+        playerScoreElement.textContent = "0";
+    }
+}
 
 function updateInterface() {
-    renderHand(
-        playerHand,
-        playerCardsElement
-    );
+    renderPlayerHands();
 
     renderHand(
         dealerHand,
         dealerCardsElement,
         dealerHoleCardHidden
     );
-
-    playerScoreElement.textContent =
-        calculateScore(playerHand);
 
     if (dealerHoleCardHidden && dealerHand.length > 1) {
         dealerScoreElement.textContent =
@@ -203,35 +265,50 @@ function updateInterface() {
             calculateScore(dealerHand);
     }
 
-    // Enable or disable buttons
-    hitButton.disabled =
-        !roundInProgress || gameOver;
+    const activeHandCards =
+        playerHands[activeHand] || [];
 
-    standButton.disabled =
-        !roundInProgress || gameOver;
+    const canAct =
+        roundInProgress &&
+        !gameOver &&
+        !handFinished[activeHand];
+
+    hitButton.disabled = !canAct;
+    standButton.disabled = !canAct;
+
+    doubleButton.disabled = !(
+        canAct &&
+        activeHandCards.length === 2 &&
+        bankroll >= handBets[activeHand]
+    );
+
+    splitButton.disabled = !(
+        canAct &&
+        !hasSplit &&
+        activeHandCards.length === 2 &&
+        activeHandCards[0].rank === activeHandCards[1].rank &&
+        bankroll >= handBets[activeHand]
+    );
 
     betButton.disabled =
         roundInProgress || bankroll < 10;
-
-    newGameButton.disabled = false;
 
     updateBankrollDisplay();
 }
 
 
 function startRound() {
-    if (roundInProgress) {
-        return;
-    }
+    if (roundInProgress) return;
 
     const selectedBet = Number(betAmountInput.value);
 
     if (
         !Number.isFinite(selectedBet) ||
+        !Number.isInteger(selectedBet) ||
         selectedBet < 10
     ) {
         gameMessageElement.textContent =
-            "The minimum bet is €10.";
+            "The minimum bet is €10. Use whole euros.";
 
         return;
     }
@@ -243,165 +320,275 @@ function startRound() {
         return;
     }
 
-    currentBet = selectedBet;
-    bankroll -= currentBet;
+    bankroll -= selectedBet;
 
-    createDeck();
+    handBets = [selectedBet];
+    playerHands = [[]];
+    handFinished = [false];
 
-    playerHand = [];
+    activeHand = 0;
+    hasSplit = false;
+
     dealerHand = [];
 
     gameOver = false;
     roundInProgress = true;
     dealerHoleCardHidden = true;
 
+    createDeck();
+
+    playerHands[0].push(drawCard());
+    dealerHand.push(drawCard());
+
+    playerHands[0].push(drawCard());
+    dealerHand.push(drawCard());
+
     gameMessageElement.textContent =
-        `You bet €${currentBet}. Hit or stand?`;
-
-    playerHand.push(drawCard());
-    dealerHand.push(drawCard());
-
-    playerHand.push(drawCard());
-    dealerHand.push(drawCard());
-
+        `You bet €${selectedBet}. Your turn now.`;
     updateInterface();
 
     const playerBlackjack =
-        calculateScore(playerHand) === 21;
+        isNaturalBlackjack(playerHands[0]);
 
     const dealerBlackjack =
-        calculateScore(dealerHand) === 21;
+        isNaturalBlackjack(dealerHand);
 
     if (playerBlackjack && dealerBlackjack) {
-        endGame(
-            "Both have Blackjack! It's a push.",
-            "push"
-        );
+        finishRound("Both have Blackjack! It's a push.", "push");
     } else if (playerBlackjack) {
-        endGame(
-            "Blackjack! You win!",
-            "win"
-        );
+        // Natural Blackjack pays 2:1 profit.
+        finishRound("Blackjack! You win 2:1!", "blackjack");
     } else if (dealerBlackjack) {
-        endGame(
-            "Dealer has Blackjack. You lose!",
-            "loss"
-        );
+        finishRound("Dealer has Blackjack. You lose!", "loss");
     }
 }
 
 
 function hit() {
-    if (!roundInProgress || gameOver) {
+    if (!roundInProgress || gameOver) return;
+
+    const hand = playerHands[activeHand];
+
+    hand.push(drawCard());
+
+    const score = calculateScore(hand);
+
+    if (score > 21) {
+        handFinished[activeHand] = true;
+
+        gameMessageElement.textContent =
+            `Hand ${activeHand + 1} busts!`;
+
+        moveToNextHand();
         return;
     }
 
-    playerHand.push(drawCard());
-
-    const score = calculateScore(playerHand);
-
     updateInterface();
 
-    if (score > 21) {
-        endGame(
-            "Bust! You went over 21. You lose.",
-            "loss"
-        );
-    } else if (score === 21) {
+    if (score === 21) {
         stand();
     }
 }
 
-
 function stand() {
-    if (!roundInProgress || gameOver) {
-        return;
-    }
+    if (!roundInProgress || gameOver) return;
 
-    dealerHoleCardHidden = false;
+    handFinished[activeHand] = true;
 
-    updateInterface();
-
-    while (calculateScore(dealerHand) < 17) {
-        dealerHand.push(drawCard());
-    }
-
-    updateInterface();
-
-    const playerScore = calculateScore(playerHand);
-    const dealerScore = calculateScore(dealerHand);
-
-    if (dealerScore > 21) {
-        endGame(
-            "Dealer busts! You win!",
-            "win"
-        );
-    } else if (playerScore > dealerScore) {
-        endGame(
-            "You win!",
-            "win"
-        );
-    } else if (playerScore < dealerScore) {
-        endGame(
-            "Dealer wins. You lose!",
-            "loss"
-        );
-    } else {
-        endGame(
-            "It's a push! Nobody wins.",
-            "push"
-        );
-    }
+    moveToNextHand();
 }
 
+function moveToNextHand() {
+    const nextHand = handFinished.findIndex(
+        (finished, index) =>
+            !finished && index > activeHand
+    );
 
-function endGame(message, result = "push") {
-    if (gameOver) {
+    if (nextHand !== -1) {
+        activeHand = nextHand;
+
+        gameMessageElement.textContent =
+            `Your turn: Hand ${activeHand + 1}.`;
+
+        updateInterface();
         return;
     }
 
-    gameOver = true;
-    roundInProgress = false;
+    playDealer();
+}
+
+function playDealer() {
     dealerHoleCardHidden = false;
 
-    if (result === "win") {
-        bankroll += currentBet * 2;
-    } else if (result === "push") {
-        bankroll += currentBet;
+    const hasActiveHand = playerHands.some(
+        hand => calculateScore(hand) <= 21
+    );
+
+    if (hasActiveHand) {
+        while (calculateScore(dealerHand) < 17) {
+            dealerHand.push(drawCard());
+        }
     }
 
+    updateInterface();
+
+    settleHands();
+}
+
+function settleHands() {
+    const dealerScore = calculateScore(dealerHand);
+
+    let totalReturned = 0;
+    const results = [];
+
+    playerHands.forEach((hand, index) => {
+        const playerScore = calculateScore(hand);
+        const bet = handBets[index];
+
+        if (playerScore > 21) {
+            results.push(`Hand ${index + 1}: Bust.`);
+        } else if (dealerScore > 21 || playerScore > dealerScore) {
+            totalReturned += bet * 2;
+            results.push(`Hand ${index + 1}: Win!`);
+        } else if (playerScore < dealerScore) {
+            results.push(`Hand ${index + 1}: Loss.`);
+        } else {
+            totalReturned += bet;
+            results.push(`Hand ${index + 1}: Push.`);
+        }
+    });
+
+    bankroll += totalReturned;
+
+    finishRound(results.join(" "), "settled", totalReturned);
+}
+
+function doubleDown() {
+    if (!roundInProgress || gameOver) return;
+
+    const hand = playerHands[activeHand];
+    const bet = handBets[activeHand];
+
+    if (hand.length !== 2 || bankroll < bet) return;
+
+    // Deduct an additional bet.
+    bankroll -= bet;
+
+    // Double the hand's stake.
+    handBets[activeHand] *= 2;
+
+    // Draw exactly one card.
+    hand.push(drawCard());
+
+    const score = calculateScore(hand);
+
+    handFinished[activeHand] = true;
+
+    if (score > 21) {
+        gameMessageElement.textContent =
+            `Hand ${activeHand + 1} busts after doubling!`;
+    } else {
+        gameMessageElement.textContent =
+            `Hand ${activeHand + 1} doubled.`;
+    }
+
+    moveToNextHand();
+}
+
+function splitHand() {
+    if (!roundInProgress || gameOver || hasSplit) return;
+
+    const hand = playerHands[activeHand];
+    const bet = handBets[activeHand];
+
+    if (
+        hand.length !== 2 ||
+        hand[0].rank !== hand[1].rank ||
+        bankroll < bet
+    ) {
+        return;
+    }
+
+    bankroll -= bet;
+
+    const firstCard = hand[0];
+    const secondCard = hand[1];
+
+    playerHands = [
+        [firstCard],
+        [secondCard]
+    ];
+
+    handBets = [bet, bet];
+    handFinished = [false, false];
+
+    activeHand = 0;
+    hasSplit = true;
+
+    playerHands[0].push(drawCard());
+    playerHands[1].push(drawCard());
+
+    gameMessageElement.textContent =
+        "Cards split! Play your first hand.";
+
+    updateInterface();
+}
+
+function finishRound(message, result, totalReturned = 0) {
+    gameOver = true;
+    roundInProgress = false;
+
+    const totalBet = handBets.reduce((sum, bet) => sum + bet, 0);
+
+    if (result === "blackjack") {
+        totalReturned = handBets[0] * 3;
+        bankroll += totalReturned;
+    } else if (result === "push") {
+        totalReturned = totalBet;
+        bankroll += totalReturned;
+    }
+
+    const netResult = totalReturned - totalBet;
+
+    if (netResult > 0) {
+        message += ` You won €${netResult}!`;
+    } else if (netResult < 0) {
+        message += ` You lost €${Math.abs(netResult)}.`;
+    } else {
+        message += " Your bet was returned. No money won or lost.";
+    }
 
     if (bankroll > sessionHighScore) {
         sessionHighScore = bankroll;
-
-        localStorage.setItem(
-            "blackjackHighScore",
-            sessionHighScore
-        );
+        localStorage.setItem("blackjackHighScore", sessionHighScore);
     }
 
-    gameMessageElement.textContent =
-        `${message} Round bet: €${currentBet}.`;
+    document.getElementById("game-message").textContent = message;
 
     updateInterface();
-
-    if (bankroll < 10) {
-        gameMessageElement.textContent +=
-            " You're out of money. Press New Game to reset your balance to €100.";
-    }
 }
 
+function currentBetForNaturalBlackjack() {
+    return handBets[0];
+}
 
 function resetGame() {
     bankroll = 100;
-    currentBet = 0;
 
-    playerHand = [];
+    playerHands = [];
+    handBets = [];
+    handFinished = [];
+
     dealerHand = [];
+
+    activeHand = 0;
+    hasSplit = false;
 
     gameOver = true;
     roundInProgress = false;
     dealerHoleCardHidden = true;
+
+    currentBet = 0;
 
     betAmountInput.value = 10;
 
@@ -409,6 +596,14 @@ function resetGame() {
         "New game! Balance reset to €100. Choose your bet and press Bet.";
 
     updateInterface();
+}
+
+function openRules() {
+    rulesPanel.hidden = false;
+}
+
+function closeRules() {
+    rulesPanel.hidden = true;
 }
 
 
@@ -420,5 +615,12 @@ betButton.addEventListener("click", startRound);
 
 newGameButton.addEventListener("click", resetGame);
 
+doubleButton.addEventListener("click", doubleDown);
+
+splitButton.addEventListener("click", splitHand);
+
+rulesButton.addEventListener("click", openRules);
+
+closeRulesButton.addEventListener("click", closeRules);
 
 resetGame();

@@ -114,4 +114,6 @@ header p {
     background-color: rgba(0, 0, 0, 0.6);
     padding: 10px 20px;
     border-radius: 6px;
+
+    transform: translateY(60px);
 }

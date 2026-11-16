@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Play Shut the Box with nine tiles and two dice.">
+    <title>Shut the Box</title>
+    <link rel="stylesheet" href="shut-the-box.css?v=game-feedback-3">
+</head>
+<body>
+    <main class="game-page">
+        <header class="toolbar">
+            <div class="page-title">
+                <a class="back-link" href="../../index.html" aria-label="Back to the game collection">←</a>
+                <h1>Shut the Box</h1>
+            </div>
+            <details class="help">
+                <summary>How to play</summary>
+                <div class="help-panel">
+                    <h2>Rules</h2>
+                    <ul>
+                        <li><strong>Start</strong> with tiles 1 to 9 open.</li>
+                        <li><strong>Roll both dice</strong> and add their values.</li>
+                        <li><strong>Select one or more open tiles</strong> whose numbers add up to your roll. Use each tile at most once per turn.</li>
+                        <li><strong>Confirm your selection</strong> to close those tiles for the rest of the game. Then roll again.</li>
+                        <li><strong>You lose</strong> if no combination of open tiles adds up to your roll.</li>
+                        <li><strong>You win</strong> when all nine tiles are closed.</li>
+                    </ul>
+                </div>
+            </details>
+        </header>
+
+        <section class="game" aria-label="Shut the Box game board">
+            <div class="wooden-box">
+                <div class="felt">
+                    <div class="tiles" role="group" aria-label="Number tiles 1 to 9">
+                        <button class="tile" type="button" data-number="1" aria-label="Tile 1, open" aria-pressed="false" disabled><span>1</span></button>
+                        <button class="tile" type="button" data-number="2" aria-label="Tile 2, open" aria-pressed="false" disabled><span>2</span></button>
+                        <button class="tile" type="button" data-number="3" aria-label="Tile 3, open" aria-pressed="false" disabled><span>3</span></button>
+                        <button class="tile" type="button" data-number="4" aria-label="Tile 4, open" aria-pressed="false" disabled><span>4</span></button>
+                        <button class="tile" type="button" data-number="5" aria-label="Tile 5, open" aria-pressed="false" disabled><span>5</span></button>
+                        <button class="tile" type="button" data-number="6" aria-label="Tile 6, open" aria-pressed="false" disabled><span>6</span></button>
+                        <button class="tile" type="button" data-number="7" aria-label="Tile 7, open" aria-pressed="false" disabled><span>7</span></button>
+                        <button class="tile" type="button" data-number="8" aria-label="Tile 8, open" aria-pressed="false" disabled><span>8</span></button>
+                        <button class="tile" type="button" data-number="9" aria-label="Tile 9, open" aria-pressed="false" disabled><span>9</span></button>
+                    </div>
+                    <div class="hinge-rail" aria-hidden="true"></div>
+
+                    <div class="dice-tray">
+                        <p class="start-hint" id="start-hint">Roll to start.</p>
+                        <div class="dice" id="dice" role="group" aria-label="Two dice" hidden>
+                            <div class="die-slot">
+                                <div class="die" id="die-1" role="img" aria-label="Die 1">
+                                    <div class="die-face die-face-one" aria-hidden="true">
+                                        <span class="pip center"></span>
+                                    </div>
+                                    <div class="die-face die-face-two" aria-hidden="true">
+                                        <span class="pip top-left"></span><span class="pip bottom-right"></span>
+                                    </div>
+                                    <div class="die-face die-face-three" aria-hidden="true">
+                                        <span class="pip top-left"></span><span class="pip center"></span><span class="pip bottom-right"></span>
+                                    </div>
+                                    <div class="die-face die-face-four" aria-hidden="true">
+                                        <span class="pip top-left"></span><span class="pip top-right"></span><span class="pip bottom-left"></span><span class="pip bottom-right"></span>
+                                    </div>
+                                    <div class="die-face die-face-five" aria-hidden="true">
+                                        <span class="pip top-left"></span><span class="pip top-right"></span><span class="pip center"></span><span class="pip bottom-left"></span><span class="pip bottom-right"></span>
+                                    </div>
+                                    <div class="die-face die-face-six" aria-hidden="true">
+                                        <span class="pip top-left"></span><span class="pip top-right"></span><span class="pip middle-left"></span><span class="pip middle-right"></span><span class="pip bottom-left"></span><span class="pip bottom-right"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="die-slot">
+                                <div class="die" id="die-2" role="img" aria-label="Die 2">
+                                    <div class="die-face die-face-one" aria-hidden="true">
+                                        <span class="pip center"></span>
+                                    </div>
+                                    <div class="die-face die-face-two" aria-hidden="true">
+                                        <span class="pip top-left"></span><span class="pip bottom-right"></span>
+                                    </div>
+                                    <div class="die-face die-face-three" aria-hidden="true">
+                                        <span class="pip top-left"></span><span class="pip center"></span><span class="pip bottom-right"></span>
+                                    </div>
+                                    <div class="die-face die-face-four" aria-hidden="true">
+                                        <span class="pip top-left"></span><span class="pip top-right"></span><span class="pip bottom-left"></span><span class="pip bottom-right"></span>
+                                    </div>
+                                    <div class="die-face die-face-five" aria-hidden="true">
+                                        <span class="pip top-left"></span><span class="pip top-right"></span><span class="pip center"></span><span class="pip bottom-left"></span><span class="pip bottom-right"></span>
+                                    </div>
+                                    <div class="die-face die-face-six" aria-hidden="true">
+                                        <span class="pip top-left"></span><span class="pip top-right"></span><span class="pip middle-left"></span><span class="pip middle-right"></span><span class="pip bottom-left"></span><span class="pip bottom-right"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-front" aria-hidden="true"><span>SHUT THE BOX</span></div>
+            </div>
+        </section>
+
+        <p class="game-status" id="game-status" role="status"></p>
+        <div class="actions" role="group" aria-label="Game controls">
+            <button class="primary-button" id="roll-button" type="button">Roll dice</button>
+            <button class="confirm-button" id="confirm-button" type="button" disabled>Confirm selection</button>
+            <button class="restart-button" id="restart-button" type="button" disabled>New game</button>
+        </div>
+    </main>
+    <script src="shut-the-box.js"></script>
+</body>
+</html>

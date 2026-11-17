@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Blackjack</title>
+
+    <link rel="stylesheet" href="blackjack.css">
+</head>
+
+<body>
+
+    <header class="top-bar">
+        <a href="../../index.html" class="back-button">
+            ← Back to Home
+        </a>
+
+        <h1>BLACKJACK</h1>
+
+        <div class="header-placeholder"></div>
+    </header>
+
+    <div class="top-buttons">
+        <button id="rules-button" class="game-button secondary">
+            Rules
+        </button>
+
+        <button id="new-game-button" class="game-button new-game">
+            New Game
+        </button>
+    </div>
+
+    <main class="game-container">
+
+        <!-- Dealer section -->
+
+        <section class="player-area">
+
+            <div class="player-info">
+                <h2>Dealer</h2>
+                <span id="dealer-score" class="score">?</span>
+            </div>
+
+            <div id="dealer-cards" class="cards">
+            </div>
+
+        </section>
+
+
+        <div id="game-message" class="game-message">
+            Your turn. Hit or stand?
+        </div>
+
+        <!-- Player section -->
+
+        <section class="player-area">
+
+            <div class="player-info">
+                <h2>You</h2>
+                <span id="player-score" class="score">0</span>
+            </div>
+
+            <div id="player-cards" class="cards">
+            </div>
+
+        </section>
+
+
+        <section class="controls">
+            <div class="bankroll-panel">
+                <div class="bankroll-item">
+                    <span>Balance</span>
+                    <strong id="bankroll">€100</strong>
+                </div>
+
+                <div class="bankroll-item">
+                    <label for="bet-amount">Your bet</label>
+                    <input
+                        id="bet-amount"
+                        type="number"
+                        min="10"
+                        step="10"
+                        value="10"
+                    >
+                    <small>Minimum bet: €10</small>
+
+                    <button id="bet-button">Bet</button>
+                </div>
+
+                <div class="bankroll-item">
+                    <span>Session high score</span>
+                    <strong id="session-high-score">€100</strong>
+                </div>
+            </div>
+
+            <div class="game-controls">
+
+                <button id="hit-button" class="game-button">
+                    Hit
+                </button>
+
+                <button id="stand-button" class="game-button secondary">
+                    Stand
+                </button>
+
+                <button id="double-button" class="game-button" disabled>
+                    Double
+                </button>
+
+                <button id="split-button" class="game-button" disabled>
+                    Split
+                </button>
+
+            </div>
+        </section>
+
+    </main>
+
+    <div id="rules-panel" class="rules-overlay" hidden>
+
+        <div class="rules-box">
+
+            <button id="close-rules-button" class="close-rules">
+                Close
+            </button>
+
+            <h2>Blackjack Rules</h2>
+
+            <ul>
+                <li>Get as close to 21 as possible without going over.</li>
+                <li>Number cards count as their face value.</li>
+                <li>Jack, Queen and King count as 10.</li>
+                <li>Aces count as 11 or 1, whichever is better for your hand.</li>
+                <li>The dealer must draw until reaching at least 17.</li>
+                <li>A regular win pays 1:1.</li>
+                <li>A natural Blackjack (21 with the first two cards) pays 2:1 profit.</li>
+                <li>A push (draw) returns your bet.</li>
+                <li>Hit draws another card, you can hit multiple times until you stand or bust (go over 21).</li>
+                <li>Stand ends your turn.</li>
+                <li>Double doubles your bet and gives you exactly one more card.</li>
+                <li>Split lets you play two hands when your first two cards have the same rank.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="blackjack.js"></script>
+
+</body>
+</html>

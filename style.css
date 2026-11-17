@@ -117,3 +117,10 @@ header p {
 
     transform: translateY(60px);
 }
+
+/* Nur Minesweeper: ganzes Bild zeigen, nichts abschneiden */
+
+.game-card img[src="img/MinesweeperCover.png"] {
+    object-fit: contain;
+    padding: 10px 10px 72px;   /* unten Platz fuer den Namen lassen */
+}

@@ -1,0 +1,217 @@
+/* Minesweeper - passend zum dunklen Design der Startseite */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: white;
+    text-align: center;
+}
+
+/* Kopfzeile mit Zurueck-Button */
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 30px;
+}
+
+.top-bar h1 {
+    margin: 0;
+    font-size: 32px;
+}
+
+.back-button,
+.header-placeholder {
+    width: 160px; /* gleich breit, damit der Titel mittig bleibt */
+}
+
+.back-button {
+    color: #aaaaaa;
+    text-decoration: none;
+    text-align: left;
+}
+
+.back-button:hover {
+    color: white;
+}
+
+/* Steuerung und Infozeile */
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+select,
+button {
+    font-size: 16px;
+    padding: 8px 14px;
+    background-color: #252525;
+    color: white;
+    border: 1px solid #444444;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover,
+select:hover {
+    background-color: #383838;
+}
+
+.info {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 15px;
+    color: #aaaaaa;
+}
+
+.counter b {
+    color: white;
+}
+
+#status.win  { color: #4caf50; font-weight: bold; }
+#status.lose { color: #ff5252; font-weight: bold; }
+
+/* Spielfeld */
+
+#grid {
+    border-collapse: separate;
+    border-spacing: 3px;
+    margin: 0 auto 40px;
+    background-color: #252525;
+    border: 1px solid #444444;
+    border-radius: 10px;
+    padding: 6px;
+    user-select: none;
+}
+
+#grid td {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 5px;
+    background-color: #4a4a4a;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+#grid td:hover {
+    background-color: #5c5c5c;
+}
+
+/* Aufgedecktes Feld */
+#grid td.clicked {
+    background-color: #1c1c1c;
+    cursor: default;
+}
+
+/* Farbige Zahlen (hell genug fuer den dunklen Hintergrund) */
+#grid td[data-num="1"] { color: #4fa3ff; }
+#grid td[data-num="2"] { color: #4caf50; }
+#grid td[data-num="3"] { color: #ff5252; }
+#grid td[data-num="4"] { color: #b388ff; }
+#grid td[data-num="5"] { color: #ff9800; }
+#grid td[data-num="6"] { color: #26c6da; }
+#grid td[data-num="7"] { color: #f06292; }
+#grid td[data-num="8"] { color: #bdbdbd; }
+
+/* Minen */
+#grid td.mine {
+    background-color: #9e9e9e;
+    cursor: default;
+}
+
+/* die Mine, auf die man geklickt hat */
+#grid td.mine.hit {
+    background-color: #e53935;
+}
+
+/* Einfache Bombe: schwarzer Kreis mit Zuendschnur und Glanzpunkt */
+.bomb {
+    display: inline-block;
+    position: relative;
+    width: 16px;
+    height: 16px;
+    margin-top: 3px;
+    border-radius: 50%;
+    background-color: #111111;
+    vertical-align: middle;
+}
+
+.bomb::before { /* Zuendschnur */
+    content: "";
+    position: absolute;
+    top: -4px;
+    right: 0;
+    width: 3px;
+    height: 7px;
+    background-color: #111111;
+    transform: rotate(40deg);
+}
+
+.bomb::after { /* Glanzpunkt */
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: #888888;
+}
+
+/* Einfache Flagge: Stange + rotes Dreieck */
+.flag-icon {
+    display: inline-block;
+    position: relative;
+    width: 14px;
+    height: 18px;
+    vertical-align: middle;
+}
+
+.flag-icon::before { /* Stange */
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 0;
+    width: 2px;
+    height: 18px;
+    background-color: #e0e0e0;
+}
+
+.flag-icon::after { /* Fahne */
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 10px solid #ff5252;
+}
+
+/* falsch gesetzte Flagge am Spielende */
+#grid td.wrong-flag {
+    background-color: #2a2a2a;
+    opacity: 0.5;
+}
+
+/* Kleine Bildschirme */
+@media (max-width: 600px) {
+    .top-bar { padding: 15px; }
+    .back-button, .header-placeholder { width: auto; }
+    .header-placeholder { display: none; }
+    #grid td { width: 22px; height: 22px; font-size: 14px; }
+    .bomb { width: 12px; height: 12px; }
+}

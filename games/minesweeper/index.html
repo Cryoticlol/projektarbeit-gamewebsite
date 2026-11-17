@@ -2,28 +2,34 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minesweeper</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header class="top-bar">
-        <a href="../../index.html" class="back-button">
-            ← Back to Home
-        </a>
-
+        <a href="../../index.html" class="back-button">← Back to Home</a>
         <h1>Minesweeper</h1>
-
         <div class="header-placeholder"></div>
     </header>
-    <p id="status">Left click = reveal, Right click = flag</p>
-    <select id="size" onchange="generateGrid()">
-        <option value="small">Small</option>
-        <option value="medium" selected>Medium</option>
-        <option value="large">Large</option>
-    </select>
-    <button onclick="generateGrid()">New Game</button>
-    <br><br>
-    <table id="grid"></table>
+
+    <main class="game">
+        <div class="controls">
+            <select id="size" onchange="generateGrid()">
+                <option value="small">Small</option>
+                <option value="medium" selected>Medium</option>
+                <option value="large">Large</option>
+            </select>
+            <button onclick="generateGrid()">New Game</button>
+        </div>
+
+        <div class="info">
+            <span class="counter">Mines left: <b id="mines-left">0</b></span>
+            <span id="status">Left click = reveal, Right click = flag</span>
+        </div>
+
+        <table id="grid"></table>
+    </main>
 
     <script src="script.js"></script>
 </body>
